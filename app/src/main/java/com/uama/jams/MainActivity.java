@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bridgeWebView = findViewById(R.id.webView);
         UamaWebSupportManager.Companion.initWebview(this,bridgeWebView);
-        bridgeWebView.loadUrl("http://192.168.10.39:8083/");
+        bridgeWebView.loadUrl("http://192.168.10.101:8080/#/");
     }
 
     @Override
