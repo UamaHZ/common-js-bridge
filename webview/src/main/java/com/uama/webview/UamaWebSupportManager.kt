@@ -2,12 +2,12 @@ package com.uama.webview
 
 import android.Manifest
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.ValueCallback
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.blankj.utilcode.constant.PermissionConstants
 import com.blankj.utilcode.util.PermissionUtils
@@ -22,8 +22,6 @@ import com.uama.webview.matisse.GifSizeFilter
 import com.uama.webview.matisse.Glide4Engine
 import com.uama.webview.matisse.ImagePreViewActivity
 import com.uama.weight.uama_webview.*
-import com.uuzuche.lib_zxing.activity.CaptureActivity
-import com.uuzuche.lib_zxing.activity.CodeUtils
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.filter.Filter
@@ -37,15 +35,15 @@ import java.io.FileInputStream
  * Created: 2019/3/28 19:53
  * Email:ruchao.jiang@uama.com.cn
  */
-class UamaWebSupportManager  {
+class UamaWebSupportManager {
     companion object {
         const val COMMON_RECODE = 2019
-        fun getWebResourceResponse(url: String = ""): WebResourceResponse?{
+        fun getWebResourceResponse(url: String = ""): WebResourceResponse? {
             val webResourceResponse = WebResourceResponse()
             webResourceResponse.encoding = "gzip"
             webResourceResponse.mimeType = "image/png"
             val file = File(getUrlByHtmlPath(url))
-            if(!file.exists())return null
+            if (!file.exists()) return null
             val fileStream = FileInputStream(file)
             webResourceResponse.data = fileStream
             return webResourceResponse
@@ -53,7 +51,7 @@ class UamaWebSupportManager  {
 
 
         private var mFunction: CallBackFunction? = null
-        private var choosePicFunc:CallBackFunction?=null
+        private var choosePicFunc: CallBackFunction? = null
 
         fun initWebview(activity: Activity, webView: BridgeWebView) {
             val settings = webView.settings
@@ -67,7 +65,7 @@ class UamaWebSupportManager  {
             val webViewClient = object : BridgeWebViewClient(activity, webView) {
                 override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
                     if (request.url?.scheme?.contains("lmimgs") == true) {
-                        return getWebResourceResponse(request.url.path?:"")
+                        return getWebResourceResponse(request.url.path ?: "")
                     }
                     return null
                 }
@@ -100,26 +98,26 @@ class UamaWebSupportManager  {
             })
 
             // 拨打电话
-            webView.registerHandler("_app_tel") { data, _ ->
+            webView.registerHandler("makePhoneCall") { data, _ ->
                 AlertDialog.Builder(activity)
                         .setTitle("提示")
                         .setMessage("确定拨打$data?")
-                        .setPositiveButton("确定"){_,_->
+                        .setPositiveButton("确定") { _, _ ->
                             PhoneUtils.dial(data)
-                        }.setNegativeButton("取消"){_,_->
+                        }.setNegativeButton("取消") { _, _ ->
                         }.create()
                         .show()
             }
 
             // 扫一扫
-            webView.registerHandler("_app_scan") { data, function ->
+            webView.registerHandler("scanCode") { data, function ->
                 mFunction = function
-                if(!PermissionUtils.isGranted(Manifest.permission.CAMERA
+                if (!PermissionUtils.isGranted(Manifest.permission.CAMERA
                                 , Manifest.permission.READ_EXTERNAL_STORAGE
-                                , Manifest.permission.READ_EXTERNAL_STORAGE)){
-                    PermissionUtils.permission(PermissionConstants.CAMERA,PermissionConstants.STORAGE).callback(object: PermissionUtils.SimpleCallback {
+                                , Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    PermissionUtils.permission(PermissionConstants.CAMERA, PermissionConstants.STORAGE).callback(object : PermissionUtils.SimpleCallback {
                         override fun onGranted() {
-                            val intent = Intent(activity, CaptureActivity::class.java)
+                            val intent = Intent(activity, ScanActivity::class.java)
                             activity.startActivityForResult(intent, COMMON_RECODE)
                         }
 
@@ -127,15 +125,15 @@ class UamaWebSupportManager  {
 
                         }
                     }).request()
-                }else{
-                    val intent = Intent(activity, CaptureActivity::class.java)
+                } else {
+                    val intent = Intent(activity, ScanActivity::class.java)
                     activity.startActivityForResult(intent, COMMON_RECODE)
                 }
             }
 
 
             //发短信
-            webView.registerHandler("_app_sendSMG", object : BridgeHandler {
+            webView.registerHandler("sendSMG", object : BridgeHandler {
                 override fun handler(data: String?, call: CallBackFunction?) {
                     data?.let {
                         val bean: DialBean? = Gson().fromJson(it, DialBean::class.java)
@@ -152,10 +150,10 @@ class UamaWebSupportManager  {
                     val bean: PickBean? = Gson().fromJson(it, PickBean::class.java)
                     bean?.let {
                         choosePicFunc = call
-                        pick(activity,bean.maxCount?:0,when(bean.type){
-                            0->true
-                            2->false
-                            else->false
+                        pick(activity, bean.maxCount ?: 0, when (bean.type) {
+                            0 -> true
+                            2 -> false
+                            else -> false
                         })
                     }
                 }
@@ -163,7 +161,7 @@ class UamaWebSupportManager  {
 
 
             //图片预览
-            webView.registerHandler("_app_previewPic") { data, call ->
+            webView.registerHandler("previewImage") { data, call ->
                 data?.let {
                     val bean: PreViewBean = Gson().fromJson(it, PreViewBean::class.java)
                     val intent = Intent(activity, ImagePreViewActivity::class.java)
@@ -188,12 +186,12 @@ class UamaWebSupportManager  {
         }
 
         const val REQUEST_CODE_CHOOSE = 10800
-        private fun pick(activity: Activity, maxNumber:Int = 9, enableCapture:Boolean = true) {
+        private fun pick(activity: Activity, maxNumber: Int = 9, enableCapture: Boolean = true) {
             if (!PermissionUtils.isGranted(Manifest.permission.READ_EXTERNAL_STORAGE
                             , Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 PermissionUtils.permission(PermissionConstants.STORAGE).callback(object : PermissionUtils.SimpleCallback {
                     override fun onGranted() {
-                        realPickImage(activity, maxNumber,enableCapture)
+                        realPickImage(activity, maxNumber, enableCapture)
                     }
 
                     override fun onDenied() {
@@ -201,17 +199,17 @@ class UamaWebSupportManager  {
                     }
                 }).request()
             } else {
-                realPickImage(activity, maxNumber,enableCapture)
+                realPickImage(activity, maxNumber, enableCapture)
             }
         }
 
-        private fun realPickImage(activity: Activity,maxNumber:Int = 9,enableCapture:Boolean = true){
+        private fun realPickImage(activity: Activity, maxNumber: Int = 9, enableCapture: Boolean = true) {
             Matisse
                     .from(activity)
                     .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.WEBP), false)
                     .countable(true)
                     .capture(enableCapture)
-                    .captureStrategy(CaptureStrategy(true, BuildConfig.APPLICATION_ID,"release"))
+                    .captureStrategy(CaptureStrategy(true, BuildConfig.APPLICATION_ID, "release"))
                     .maxSelectable(maxNumber)
                     .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                     .gridExpectedSize(activity.resources.getDimensionPixelSize(R.dimen.grid_expected_size))
@@ -220,12 +218,13 @@ class UamaWebSupportManager  {
                     .imageEngine(Glide4Engine())    // for glide-V4
                     .forResult(REQUEST_CODE_CHOOSE)
         }
+
         const val PrefixUrl = "lmimgs://"
-        fun getHtmlPathByUrl(url:String)= PrefixUrl+url
+        fun getHtmlPathByUrl(url: String) = PrefixUrl + url
 
-        private fun getUrlByHtmlPath(path:String) = path.replace(PrefixUrl,"")
+        private fun getUrlByHtmlPath(path: String) = path.replace(PrefixUrl, "")
 
-        fun destroyWebView(webView: BridgeWebView?){
+        fun destroyWebView(webView: BridgeWebView?) {
             if (webView != null) {
                 try {
                     webView.onPause()
@@ -238,28 +237,25 @@ class UamaWebSupportManager  {
             }
         }
 
-        fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?,activity: Activity) {
+        fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, activity: Activity) {
             when (requestCode) {
                 REQUEST_CODE_CHOOSE -> {
                     data?.let {
                         val selectList = Matisse.obtainResult(data)
-                        val pathList = selectList.map {uri->
-                            getHtmlPathByUrl(PathUtils.getPath(activity,uri))
+                        val pathList = selectList.map { uri ->
+                            getHtmlPathByUrl(PathUtils.getPath(activity, uri))
                         }.toMutableList()
                         choosePicFunc?.onCallBack(UploadPicture(pathList).toJsonStringByGson())
                     }
                 }
                 COMMON_RECODE -> {
+                    if (resultCode != RESULT_OK) return
                     data?.let {
                         val bundle: Bundle? = it.extras
                         bundle?.let {
-                            if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
-                                val result: String? = bundle.getString(CodeUtils.RESULT_STRING)
-                                val scanBean = ScanBean(result)
-                                mFunction?.onCallBack(scanBean.toJsonStringByGson())
-                            } else {
-                                Toast.makeText(activity, "解析二维码失败", Toast.LENGTH_LONG).show();
-                            }
+                            val result: String? = bundle.getString("result")
+                            val scanBean = ScanBean(result)
+                            mFunction?.onCallBack(scanBean.toJsonStringByGson())
                         }
 
                     }

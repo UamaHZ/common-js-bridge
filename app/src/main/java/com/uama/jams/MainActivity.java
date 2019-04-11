@@ -3,6 +3,7 @@ package com.uama.jams;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.tencent.smtt.sdk.QbSdk;
 import com.uama.webview.UamaWebSupportManager;
 import com.uama.weight.uama_webview.BridgeWebView;
 

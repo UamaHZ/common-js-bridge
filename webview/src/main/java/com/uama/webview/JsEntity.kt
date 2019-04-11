@@ -25,4 +25,4 @@ data class PickBean(var type:Int?,var maxCount:Int?,var cbName:String?)
 
 data class UploadPicture(var tempFilePaths:MutableList<String>)
 
-data class PreViewBean(var currentIndex:Int?,var picList:MutableList<String>?): Serializable
+data class PreViewBean(var currentIndex:Int?,var imageUrls:MutableList<String>?): Serializable

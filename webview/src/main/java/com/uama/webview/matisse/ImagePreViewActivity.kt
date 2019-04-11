@@ -26,7 +26,7 @@ public class ImagePreViewActivity : FragmentActivity() {
     private fun start() {
         val bean = intent.getSerializableExtra("bean") as PreViewBean?
         bean?.let {
-            val pics: MutableList<String>? = it.picList
+            val pics: MutableList<String>? = it.imageUrls
             pics?.forEach {str->
                 fragmentList.add(ImageFragment.getInstance(str))
             }
