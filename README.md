@@ -1,6 +1,6 @@
 # common-js-bridge
 
-[![img](https://jitpack.io/v/UamaHZ/common-js-bridge.svg)](https://jitpack.io/#)(https://jitpack.io/#UamaHZ/common-js-bridge/0.1-alpha)
+[![](https://jitpack.io/v/UamaHZ/common-js-bridge.svg)](https://jitpack.io/#UamaHZ/common-js-bridge)
 
 封装一些原生能力供`js`调用：
 
