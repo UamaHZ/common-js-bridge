@@ -34,5 +34,5 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.11'
     implementation 'com.blankj:utilcodex:1.23.7'
-    implementation 'com.github.UamaHZ:uama-zxing:0.4-alpha'
+    implementation 'com.github.UamaHZ:uama-zxing:-SNAPSHOT'
 }
