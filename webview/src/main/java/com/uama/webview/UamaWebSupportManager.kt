@@ -7,8 +7,8 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.webkit.ValueCallback
-import androidx.appcompat.app.AlertDialog
 import com.blankj.utilcode.constant.PermissionConstants
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.PhoneUtils

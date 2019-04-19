@@ -1,10 +1,10 @@
 package com.uama.webview.matisse
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.uama.webview.R
 import kotlinx.android.synthetic.main.fragment_image_preview.*
@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_image_preview.*
  *Created: 2019/4/1 15:40
  *Email:ruchao.jiang@uama.com.cn
  */
-class ImageFragment :Fragment(){
+class ImageFragment : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_image_preview,container,false)
     }

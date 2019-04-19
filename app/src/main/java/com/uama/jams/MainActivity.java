@@ -1,16 +1,14 @@
 package com.uama.jams;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.tencent.smtt.sdk.QbSdk;
 import com.uama.webview.UamaWebSupportManager;
 import com.uama.weight.uama_webview.BridgeWebView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     BridgeWebView bridgeWebView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         UamaWebSupportManager.Companion.onActivityResult(requestCode,resultCode,data,this);
     }
