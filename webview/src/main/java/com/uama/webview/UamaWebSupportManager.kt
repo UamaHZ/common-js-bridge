@@ -19,11 +19,11 @@ import com.tencent.smtt.sdk.WebSettings
 import com.tencent.smtt.sdk.WebView
 import com.uama.webview.extension.toJsonStringByGson
 import com.uama.webview.matisse.GifSizeFilter
-import com.uama.webview.matisse.Glide4Engine
 import com.uama.webview.matisse.ImagePreViewActivity
 import com.uama.weight.uama_webview.*
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
+import com.zhihu.matisse.engine.impl.GlideEngine
 import com.zhihu.matisse.filter.Filter
 import com.zhihu.matisse.internal.entity.CaptureStrategy
 import com.zhihu.matisse.internal.utils.PathUtils
@@ -215,7 +215,7 @@ class UamaWebSupportManager {
                     .gridExpectedSize(activity.resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                     .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                     .thumbnailScale(0.85f)
-                    .imageEngine(Glide4Engine())    // for glide-V4
+                    .imageEngine(GlideEngine())    // for glide-V4
                     .forResult(REQUEST_CODE_CHOOSE)
         }
 
