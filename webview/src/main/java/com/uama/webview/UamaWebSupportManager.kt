@@ -18,15 +18,15 @@ import com.tencent.smtt.export.external.interfaces.WebResourceResponse
 import com.tencent.smtt.sdk.WebSettings
 import com.tencent.smtt.sdk.WebView
 import com.uama.webview.extension.toJsonStringByGson
-import com.uama.webview.matisse.GifSizeFilter
 import com.uama.webview.matisse.ImagePreViewActivity
 import com.uama.weight.uama_webview.*
-import com.zhihu.matisse.Matisse
-import com.zhihu.matisse.MimeType
-import com.zhihu.matisse.engine.impl.GlideEngine
-import com.zhihu.matisse.filter.Filter
-import com.zhihu.matisse.internal.entity.CaptureStrategy
-import com.zhihu.matisse.internal.utils.PathUtils
+import com.uama.zxing.matisse.GifSizeFilter
+import uama.hangzhou.image.album.Matisse
+import uama.hangzhou.image.album.MimeType
+import uama.hangzhou.image.album.engine.impl.GlideEngine
+import uama.hangzhou.image.album.filter.Filter
+import uama.hangzhou.image.album.internal.entity.CaptureStrategy
+import uama.hangzhou.image.album.internal.utils.PathUtils
 import java.io.File
 import java.io.FileInputStream
 
@@ -209,7 +209,7 @@ class UamaWebSupportManager {
                     .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.WEBP), false)
                     .countable(true)
                     .capture(enableCapture)
-                    .captureStrategy(CaptureStrategy(true, BuildConfig.APPLICATION_ID, "release"))
+                    .captureStrategy(CaptureStrategy(true, BuildConfig.APPLICATION_ID))
                     .maxSelectable(maxNumber)
                     .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                     .gridExpectedSize(activity.resources.getDimensionPixelSize(R.dimen.grid_expected_size))
