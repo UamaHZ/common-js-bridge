@@ -87,15 +87,7 @@ class UamaWebSupportManager {
 
                 }
             })
-            webView.webChromeClient = BridgeWebChromeClient(object : BridgeWebChromeClient.FileChooserCallback {
-                override fun showFileChooserUris(valueCallback: ValueCallback<Array<Uri>>) {
 
-                }
-
-                override fun showFileChooserUri(valueCallback: ValueCallback<Uri>) {
-
-                }
-            })
 
             // 拨打电话
             webView.registerHandler("makePhoneCall") { data, _ ->
