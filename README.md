@@ -13,7 +13,6 @@
 - 在View`BridgeWebView`初始化后，调用`initWebview(activity: Activity, webView: BridgeWebView)`进行初始化；
 - 在页面`onActivityResult`回调处，调用`UamaWebSupportManager.onActivityResult()`
 - 在页面销毁时，调用`destroyWebView(webView: BridgeWebView?)`
-好了，这样您老就集成完成了
 
 
 **注意，由于我们的webview使用的远程x5版本，暂时不支持64位处理器，所以我们需要对App限制降级到32位运行；处理方案如下（[x5说明](https://x5.tencent.com/tbs/technical.html#/detail/sdk/1/34cf1488-7dc2-41ca-a77f-0014112bcab7)）：**
@@ -23,7 +22,7 @@
 
 **由于现在项目已经集成过相册选择，所以此处我们选择使用项目封装的相册选择库，版本是'com.uama.widget:image-factory:3.2.4';**
 
-**同样，远程库集成了扫一扫功能，所以原有项目中存在的zx-ing jar包需要进行移除**
+ **同样，远程库集成了扫一扫功能，所以原有项目中存在的zx-ing jar包需要进行移除**
 
 针对`java`集成：
 
