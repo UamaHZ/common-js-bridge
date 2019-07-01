@@ -5,10 +5,12 @@ import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.webkit.ValueCallback
+import android.util.Log
+import cn.com.uama.imageuploader.LMImageUploader
+import cn.com.uama.imageuploader.UploadListener
+import cn.com.uama.imageuploader.UploadType
 import com.blankj.utilcode.constant.PermissionConstants
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.PhoneUtils
@@ -19,7 +21,10 @@ import com.tencent.smtt.sdk.WebSettings
 import com.tencent.smtt.sdk.WebView
 import com.uama.webview.extension.toJsonStringByGson
 import com.uama.webview.matisse.ImagePreViewActivity
-import com.uama.weight.uama_webview.*
+import com.uama.weight.uama_webview.BridgeHandler
+import com.uama.weight.uama_webview.BridgeWebView
+import com.uama.weight.uama_webview.BridgeWebViewClient
+import com.uama.weight.uama_webview.CallBackFunction
 import com.uama.zxing.matisse.GifSizeFilter
 import uama.hangzhou.image.album.Matisse
 import uama.hangzhou.image.album.MimeType
@@ -78,17 +83,6 @@ class UamaWebSupportManager {
                 }
             }
             webView.webViewClient = webViewClient
-            webView.webChromeClient = BridgeWebChromeClient(object : BridgeWebChromeClient.FileChooserCallback {
-                override fun showFileChooserUris(valueCallback: ValueCallback<Array<Uri>>) {
-
-                }
-
-                override fun showFileChooserUri(valueCallback: ValueCallback<Uri>) {
-
-                }
-            })
-
-
             // 拨打电话
             webView.registerHandler("makePhoneCall") { data, _ ->
                 AlertDialog.Builder(activity)
@@ -157,7 +151,11 @@ class UamaWebSupportManager {
                 data?.let {
                     val bean: PreViewBean = Gson().fromJson(it, PreViewBean::class.java)
                     val intent = Intent(activity, ImagePreViewActivity::class.java)
-                    intent.putExtra("bean", bean)
+                    val list= bean.imageUrls?.map {path->
+                        getUrlByHtmlPath(path)
+                    }?.toMutableList()
+                    val realPreviewBean = PreViewBean(bean.currentIndex,list)
+                    intent.putExtra("bean", realPreviewBean)
                     activity.startActivity(intent)
                 }
             }
@@ -167,14 +165,42 @@ class UamaWebSupportManager {
 
 
             // 网络状态
-            webView.registerHandler("_app_getNetstatus", object : BridgeHandler {
-                override fun handler(data: String?, call: CallBackFunction?) {
-                    val dat = H5RouteUtils._app_getNetstatus()
-                    val callBa = Gson().toJson(dat)
-                    call?.onCallBack(callBa)
-                }
-            })
+            webView.registerHandler("_app_getNetstatus") { data, call ->
+                val dat = H5RouteUtils._app_getNetstatus()
+                val callBa = Gson().toJson(dat)
+                call?.onCallBack(callBa)
+            }
 
+            class MineUploadListener(val call:CallBackFunction):UploadListener{
+                override fun onSuccess(str: String) {
+                    call.onCallBack(str)
+                }
+
+                override fun onError(p0: String, p1: String) {
+                    call.onCallBack("")
+                }
+            }
+
+            webView.registerHandler("uploadImage"){data,call->
+                data?.let {
+                    val jsBean = Gson().fromJson(data,JsImageBean::class.java)
+                    Log.i("jsBean",jsBean?.uploadUrl)
+                    if(jsBean?.imageFilePaths?.isNotEmpty() == true){
+                        val imgPaths = jsBean.imageFilePaths.map {path->
+                            getUrlByHtmlPath(path)
+                        }
+                        val type:String = when(jsBean.type?.isNotEmpty()==true) {
+                            true-> jsBean.type!!
+                            false-> UploadType.USER
+                        }
+                        if(jsBean.uploadUrl?.isNotEmpty() == true){
+                            LMImageUploader.compressAndUpload(jsBean.uploadUrl,activity, imgPaths, type,MineUploadListener(call))
+                        }else{
+                            LMImageUploader.compressAndUpload(activity, imgPaths,  type, MineUploadListener(call))
+                        }
+                    }
+                }
+            }
         }
 
         const val REQUEST_CODE_CHOOSE = 10800

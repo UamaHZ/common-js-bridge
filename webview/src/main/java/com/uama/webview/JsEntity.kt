@@ -26,3 +26,5 @@ data class PickBean(var type:Int?,var maxCount:Int?,var cbName:String?)
 data class UploadPicture(var tempFilePaths:MutableList<String>)
 
 data class PreViewBean(var currentIndex:Int?,var imageUrls:MutableList<String>?): Serializable
+
+data class JsImageBean(val type:String?,val uploadUrl:String?,val baseUrl:String?,val imageFilePaths:MutableList<String>?): Serializable
