@@ -85,11 +85,12 @@ class UamaWebSupportManager {
             webView.webViewClient = webViewClient
             // 拨打电话
             webView.registerHandler("makePhoneCall") { data, _ ->
+                val bean : PhoneBean? = Gson().fromJson(data, PhoneBean::class.java)
                 AlertDialog.Builder(activity)
                         .setTitle("提示")
-                        .setMessage("确定拨打$data?")
+                        .setMessage("确定拨打${bean?.phoneNumber}?")
                         .setPositiveButton("确定") { _, _ ->
-                            PhoneUtils.dial(data)
+                            PhoneUtils.dial(bean?.phoneNumber)
                         }.setNegativeButton("取消") { _, _ ->
                         }.create()
                         .show()

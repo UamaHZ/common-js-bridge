@@ -1,7 +1,6 @@
 package com.uama.webview
 
 import java.io.Serializable
-import java.lang.StringBuilder
 
 data class NetStatus(var netType:Int,var downLoadSpeed:Long =0L ,var uploadSpeed:Long = 0L)
 
@@ -18,6 +17,8 @@ fun MutableList<String>?.getPhoneNumber():String{
 }
 
 data class DialBean(var phone:String?,var text:String?)
+
+data class PhoneBean(var phoneNumber : String?,var text:String?)
 
 data class ScanBean(var content:String?)
 
