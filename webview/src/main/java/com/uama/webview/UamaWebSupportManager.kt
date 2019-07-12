@@ -228,7 +228,7 @@ class UamaWebSupportManager {
                     .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.WEBP), false)
                     .countable(true)
                     .capture(enableCapture)
-                    .captureStrategy(CaptureStrategy(true, BuildConfig.APPLICATION_ID))
+                    .captureStrategy(CaptureStrategy(true, activity.getString(R.string.applicationId)))
                     .maxSelectable(maxNumber)
                     .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                     .gridExpectedSize(activity.resources.getDimensionPixelSize(R.dimen.grid_expected_size))
