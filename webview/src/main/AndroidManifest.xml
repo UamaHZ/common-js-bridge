@@ -8,15 +8,5 @@
     <application>
         <activity android:name=".ScanActivity"/>
         <activity android:name=".matisse.ImagePreViewActivity"/>
-
-        <provider
-            android:name="com.uama.webview.MatisseCaptureProvider"
-            android:authorities="${applicationId}.matisseCaptureProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/matisse_capture_provider"/>
-        </provider>
     </application>
 </manifest>

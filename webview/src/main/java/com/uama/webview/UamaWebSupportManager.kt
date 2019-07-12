@@ -223,13 +223,12 @@ class UamaWebSupportManager {
         }
 
         private fun realPickImage(activity: Activity, maxNumber: Int = 9, enableCapture: Boolean = true) {
-            val authority : String = String.format("%s%s",activity.getString(R.string.applicationId),".matisseCaptureProvider")
             Matisse
                     .from(activity)
                     .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.WEBP), false)
                     .countable(true)
                     .capture(enableCapture)
-                    .captureStrategy(CaptureStrategy(true,authority))
+                    .captureStrategy(CaptureStrategy(true, activity.getString(R.string.applicationId)))
                     .maxSelectable(maxNumber)
                     .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                     .gridExpectedSize(activity.resources.getDimensionPixelSize(R.dimen.grid_expected_size))
