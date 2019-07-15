@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">UamaWebview</string>
+    <string name="applicationId">com.uama.jams</string>
 </resources>

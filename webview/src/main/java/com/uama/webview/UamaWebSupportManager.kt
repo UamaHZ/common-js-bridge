@@ -31,7 +31,6 @@ import uama.hangzhou.image.album.MimeType
 import uama.hangzhou.image.album.engine.impl.GlideEngine
 import uama.hangzhou.image.album.filter.Filter
 import uama.hangzhou.image.album.internal.entity.CaptureStrategy
-import uama.hangzhou.image.album.internal.utils.PathUtils
 import java.io.File
 import java.io.FileInputStream
 
@@ -223,13 +222,12 @@ class UamaWebSupportManager {
         }
 
         private fun realPickImage(activity: Activity, maxNumber: Int = 9, enableCapture: Boolean = true) {
-            val authority : String = String.format("%s%s",activity.getString(R.string.applicationId),".matisseCaptureProvider")
             Matisse
                     .from(activity)
                     .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.WEBP), false)
                     .countable(true)
                     .capture(enableCapture)
-                    .captureStrategy(CaptureStrategy(true,authority))
+                    .captureStrategy(CaptureStrategy(true, activity.getString(uama.hangzhou.image.R.string.applicationId) + ".provider"))
                     .maxSelectable(maxNumber)
                     .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                     .gridExpectedSize(activity.resources.getDimensionPixelSize(R.dimen.grid_expected_size))
@@ -261,11 +259,12 @@ class UamaWebSupportManager {
             when (requestCode) {
                 REQUEST_CODE_CHOOSE -> {
                     data?.let {
-                        val selectList = Matisse.obtainResult(data)
-                        val pathList = selectList.map { uri ->
-                            getHtmlPathByUrl(PathUtils.getPath(activity, uri))
-                        }.toMutableList()
-                        choosePicFunc?.onCallBack(UploadPicture(pathList).toJsonStringByGson())
+                        val pathList = Matisse.obtainPathResult(data)?.map { path ->
+                            getHtmlPathByUrl(path)
+                        }?.toMutableList()
+                        if(pathList!=null){
+                            choosePicFunc?.onCallBack(UploadPicture(pathList).toJsonStringByGson())
+                        }
                     }
                 }
                 COMMON_RECODE -> {
