@@ -31,6 +31,8 @@ import uama.hangzhou.image.album.MimeType
 import uama.hangzhou.image.album.engine.impl.GlideEngine
 import uama.hangzhou.image.album.filter.Filter
 import uama.hangzhou.image.album.internal.entity.CaptureStrategy
+import uama.share.UamaShareManger
+import uama.share.bean.UamaH5ShareEntity
 import java.io.File
 import java.io.FileInputStream
 
@@ -162,7 +164,23 @@ class UamaWebSupportManager {
 
 
             //webView.registerHandler("_app_getNetstatus",hand)
-
+            //分享
+            webView.registerHandler("share"){
+                data,call ->
+                data?.let {
+                    val  entity:UamaH5ShareEntity = Gson().fromJson(it, UamaH5ShareEntity::class.java);
+                    var type = entity.getTypes();
+                    val shareManger = UamaShareManger()
+                    shareManger.setShareListener {
+                        call.onCallBack(it);
+                    }
+                    if (type != null && type.size>0) {
+                        shareManger.share(activity, type.contains(2), type.contains(1), type.contains(3), type.contains(4), entity);
+                    } else {
+                        shareManger.share(activity, true, true, true, true, entity);
+                    }
+                }
+            }
 
             // 网络状态
             webView.registerHandler("_app_getNetstatus") { data, call ->
