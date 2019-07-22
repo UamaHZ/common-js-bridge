@@ -164,8 +164,6 @@ class UamaWebSupportManager {
                 }
             }
 
-
-            //webView.registerHandler("_app_getNetstatus",hand)
             //分享
             webView.registerHandler("share"){
                 data,call ->
