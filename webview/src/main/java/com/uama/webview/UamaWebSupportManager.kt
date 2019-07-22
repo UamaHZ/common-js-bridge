@@ -64,6 +64,8 @@ class UamaWebSupportManager {
             settings.allowFileAccess = true
             settings.domStorageEnabled = true//允许DCOM
             settings.cacheMode = WebSettings.LOAD_NO_CACHE
+            val userAgent = settings.userAgentString + "@uama"
+            settings.userAgentString = userAgent
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 settings.mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             }
@@ -167,17 +169,17 @@ class UamaWebSupportManager {
             //分享
             webView.registerHandler("share"){
                 data,call ->
-                data?.let {
-                    val  entity:UamaH5ShareEntity = Gson().fromJson(it, UamaH5ShareEntity::class.java);
-                    var type = entity.getTypes();
+                data?.let { it ->
+                    val  entity:UamaH5ShareEntity = Gson().fromJson(it, UamaH5ShareEntity::class.java)
+                    var type = entity.types
                     val shareManger = UamaShareManger()
                     shareManger.setShareListener {
-                        call.onCallBack(it);
+                        call.onCallBack(it)
                     }
                     if (type != null && type.size>0) {
-                        shareManger.share(activity, type.contains(2), type.contains(1), type.contains(3), type.contains(4), entity);
+                        shareManger.share(activity, type.contains(2), type.contains(1), type.contains(3), type.contains(4), entity)
                     } else {
-                        shareManger.share(activity, true, true, true, true, entity);
+                        shareManger.share(activity, true, true, true, true, entity)
                     }
                 }
             }
@@ -223,9 +225,8 @@ class UamaWebSupportManager {
 
         const val REQUEST_CODE_CHOOSE = 10800
         private fun pick(activity: Activity, maxNumber: Int = 9, enableCapture: Boolean = true) {
-            if (!PermissionUtils.isGranted(Manifest.permission.READ_EXTERNAL_STORAGE
-                            , Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                PermissionUtils.permission(PermissionConstants.STORAGE).callback(object : PermissionUtils.SimpleCallback {
+            if (!PermissionUtils.isGranted(PermissionConstants.STORAGE,PermissionConstants.CAMERA)) {
+                PermissionUtils.permission(PermissionConstants.STORAGE,PermissionConstants.CAMERA).callback(object : PermissionUtils.SimpleCallback {
                     override fun onGranted() {
                         realPickImage(activity, maxNumber, enableCapture)
                     }

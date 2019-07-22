@@ -7,12 +7,6 @@ import android.os.Bundle;
 import com.uama.webview.UamaWebSupportManager;
 import com.uama.weight.uama_webview.BridgeWebView;
 
-import java.io.InputStream;
-import java.util.List;
-
-import cn.com.uama.imageuploader.LMImageUploader;
-import okhttp3.Interceptor;
-
 
 public class MainActivity extends Activity {
     BridgeWebView bridgeWebView;
