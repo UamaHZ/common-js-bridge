@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.text.TextUtils
 import android.util.Log
 import cn.com.uama.imageuploader.LMImageUploader
 import cn.com.uama.imageuploader.UploadListener
@@ -170,7 +171,8 @@ class UamaWebSupportManager {
                 data,call ->
                 data?.let { it ->
                     val  entity:H5ShareEntity = Gson().fromJson(it, H5ShareEntity::class.java)
-                    entity.url = entity.webpageUrl
+                    if(TextUtils.isEmpty(entity.url))
+                        entity.url = entity.webpageUrl
                     var type = entity.types
                     val shareManger = UamaShareManger()
                     shareManger.setShareListener {
