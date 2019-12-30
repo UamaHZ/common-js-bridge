@@ -41,6 +41,7 @@ import java.io.FileInputStream
  * Created: 2019/3/28 19:53
  * Email:ruchao.jiang@uama.com.cn
  */
+data class H5ShareEntity(var webpageUrl:String): UamaH5ShareEntity()
 class UamaWebSupportManager {
     companion object {
         const val COMMON_RECODE = 2019
@@ -168,7 +169,8 @@ class UamaWebSupportManager {
             webView.registerHandler("share"){
                 data,call ->
                 data?.let { it ->
-                    val  entity:UamaH5ShareEntity = Gson().fromJson(it, UamaH5ShareEntity::class.java)
+                    val  entity:H5ShareEntity = Gson().fromJson(it, H5ShareEntity::class.java)
+                    entity.url = entity.webpageUrl
                     var type = entity.types
                     val shareManger = UamaShareManger()
                     shareManger.setShareListener {
@@ -244,7 +246,7 @@ class UamaWebSupportManager {
                     .choose(MimeType.of(MimeType.JPEG, MimeType.PNG, MimeType.WEBP), false)
                     .countable(true)
                     .capture(enableCapture)
-                    .captureStrategy(CaptureStrategy(true, activity.getString(uama.hangzhou.image.R.string.applicationId) + ".provider"))
+                    .captureStrategy(CaptureStrategy(true, activity.application.packageName + ".provider"))
                     .maxSelectable(maxNumber)
                     .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                     .gridExpectedSize(activity.resources.getDimensionPixelSize(R.dimen.grid_expected_size))
