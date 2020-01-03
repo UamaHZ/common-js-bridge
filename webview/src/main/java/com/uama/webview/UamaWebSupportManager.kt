@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
@@ -85,6 +86,29 @@ class UamaWebSupportManager {
                         return getWebResourceResponse(urlStr)
                     }
                     return null
+                }
+
+                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                    // 处理拨打电话的 url，以覆盖 BridgeWebViewClient 中的行为
+                    // BridgeWebViewClient 中的拨打电话代码需要申请 CALL_PHONE 权限
+                    // 之所以没有使用桥方法来拨打电话，是因为在做项目缴费的时候 h5 里面没有使用桥方法
+                    // 临近封板才发现拨打电话有问题，如果要改为使用桥方法，前端、Android、iOS 三端都要改代码
+                    // 为了最小化影响，暂时这样处理
+                    if (url?.contains("tel:") == true) {
+                        AlertDialog.Builder(activity)
+                                .setMessage("确认拨打此电话?")
+                                .setPositiveButton("确定") { _, _ ->
+                                    try {
+                                        activity.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse(url)))
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                                .setNegativeButton("取消", null)
+                                .show()
+                        return true
+                    }
+                    return super.shouldOverrideUrlLoading(view, url)
                 }
             }
             webView.webViewClient = webViewClient
