@@ -19,6 +19,7 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url "http://121.40.102.80:7610/nexus/content/groups/android_repository_group/" }
     }
 }
 
