@@ -3,6 +3,7 @@ package com.uama.webview
 import android.Manifest
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
@@ -33,8 +34,9 @@ import uama.hangzhou.image.album.MimeType
 import uama.hangzhou.image.album.engine.impl.GlideEngine
 import uama.hangzhou.image.album.filter.Filter
 import uama.hangzhou.image.album.internal.entity.CaptureStrategy
-import uama.share.UamaShareManger
+import uama.share.ShareDialog
 import uama.share.bean.UamaH5ShareEntity
+import uama.share.callback.UamaShareCallback
 import java.io.File
 import java.io.FileInputStream
 
@@ -192,22 +194,43 @@ class UamaWebSupportManager {
 
             //分享
             webView.registerHandler("share"){
-                data,call ->
-                data?.let { it ->
-                    val  entity:H5ShareEntity = Gson().fromJson(it, H5ShareEntity::class.java)
-                    if(TextUtils.isEmpty(entity.url))
-                        entity.url = entity.webpageUrl
-                    var type = entity.types
-                    val shareManger = UamaShareManger()
-                    shareManger.setShareListener {
-                        call.onCallBack(it)
+                data, call ->
+                    val  entity:JsShare = Gson().fromJson(data, JsShare::class.java)
+                    val type = entity.types
+                    if(type?.isEmpty() == true)return@registerHandler
+                    val shareDialog = ShareDialog(activity)
+                            .setThumbImageUrl(entity.imageUrl)
+                            .setDescription(entity.content)
+                            .setSmsText(entity.smsMessage)
+                            .setTitle(entity.title)
+                            .setWebpageUrl(entity.webpageUrl)
+                            .setCallback(object:UamaShareCallback{
+                                override fun onShareSuccess(shareType: Int) {
+                                    call.onCallBack("0")
+                                }
+
+                                override fun onShareCanceled(shareType: Int) {
+                                    call.onCallBack("2")
+                                }
+
+                                override fun onShareError(shareType: Int, errorCode: Int) {
+                                    call.onCallBack("1")
+                                }
+                            })
+
+                    if(type?.contains(1) == true){
+                        shareDialog.showQQ()
                     }
-                    if (type != null && type.size>0) {
-                        shareManger.share(activity, type.contains(2), type.contains(1), type.contains(3), type.contains(4), entity)
-                    } else {
-                        shareManger.share(activity, true, true, true, true, entity)
+                    if(type?.contains(2) == true){
+                        shareDialog.showWechat()
                     }
-                }
+                    if(type?.contains(3) == true){
+                        shareDialog.showWechatCircle()
+                    }
+                    if(type?.contains(4) == true){
+                        shareDialog.showSms(true)
+                    }
+                    shareDialog.show()
             }
 
             // 网络状态

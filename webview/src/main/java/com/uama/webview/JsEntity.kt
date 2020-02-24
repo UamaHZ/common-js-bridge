@@ -29,3 +29,6 @@ data class UploadPicture(var tempFilePaths:MutableList<String>)
 data class PreViewBean(var currentIndex:Int?,var imageUrls:MutableList<String>?): Serializable
 
 data class JsImageBean(val type:String?,val uploadUrl:String?,val baseUrl:String?,val imageFilePaths:MutableList<String>?): Serializable
+
+data class JsShare(val webpageUrl:String?,val title:String?,val content:String?,val imageUrl:String?,val smsMessage:String?,
+                   val extraParam:String?,val types:MutableList<Int>?)
